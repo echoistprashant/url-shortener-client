@@ -27,13 +27,21 @@ function Login() {
 
       navigate("/");
     } catch (err) {
-      if (err.response) {
-        setError(err.response.data.detail);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
-    }
-  };
+  console.log(err);
+
+  if (err.response) {
+    console.log("Response:", err.response);
+    setError(err.response.data.detail);
+  } else if (err.request) {
+    console.log("Request:", err.request);
+    setError("No response received from the server.");
+  } else {
+    console.log("Error:", err.message);
+    setError(err.message);
+  }
+};
+};
+
 
   return (
     <div>
