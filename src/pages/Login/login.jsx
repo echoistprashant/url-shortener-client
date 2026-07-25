@@ -23,25 +23,21 @@ function Login() {
         password,
       });
 
-      login(data.access_token);
+      await login(data.access_token);
 
       navigate("/");
     } catch (err) {
-  console.log(err);
+      console.error(err);
 
-  if (err.response) {
-    console.log("Response:", err.response);
-    setError(err.response.data.detail);
-  } else if (err.request) {
-    console.log("Request:", err.request);
-    setError("No response received from the server.");
-  } else {
-    console.log("Error:", err.message);
-    setError(err.message);
-  }
-};
-};
-
+      if (err.response) {
+        setError(err.response.data.detail);
+      } else if (err.request) {
+        setError("No response received from the server.");
+      } else {
+        setError(err.message);
+      }
+    }
+  };
 
   return (
     <div>
