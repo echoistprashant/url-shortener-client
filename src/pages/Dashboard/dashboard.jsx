@@ -1,3 +1,5 @@
+import Navbar from "../../components/Navbar/Navbar";
+import ShortenUrlForm from "../../components/ShortenUrlForm/ShortenUrlForm";
 import { useAuth } from "../../context/AuthContext";
 
 function Dashboard() {
@@ -5,23 +7,38 @@ function Dashboard() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <Navbar />
 
-      {user ? (
-        <div>
-          <h2>Welcome, {user.username} 👋</h2>
+      <main
+        style={{
+          maxWidth: "1000px",
+          margin: "40px auto",
+          padding: "0 20px",
+        }}
+      >
+        <h1>Dashboard</h1>
+
+        <div
+          style={{
+            marginTop: "20px",
+            padding: "20px",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+          }}
+        >
+          <h2>Welcome, {user?.username} 👋</h2>
 
           <p>
-            <strong>Email:</strong> {user.email}
+            <strong>Email:</strong> {user?.email}
           </p>
 
           <p>
-            <strong>User ID:</strong> {user.id}
+            <strong>User ID:</strong> {user?.id}
           </p>
         </div>
-      ) : (
-        <p>Loading user information...</p>
-      )}
+
+        <ShortenUrlForm />
+      </main>
     </div>
   );
 }
