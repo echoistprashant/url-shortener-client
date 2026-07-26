@@ -11,8 +11,21 @@ export const createShortUrl = async (urlData, token) => {
 };
 
 
-export const getMyUrls = async (token) => {
+export const getMyUrls = async (token, search = "") => {
   const response = await api.get("/my-urls", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      search,
+    },
+  });
+
+  return response.data;
+};
+
+export const deleteShortUrl = async (shortCode, token) => {
+  const response = await api.delete(`/${shortCode}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

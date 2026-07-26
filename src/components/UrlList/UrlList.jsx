@@ -1,25 +1,21 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { getMyUrls } from "../../services/urlService";
+import { useState } from "react";
 
-function UrlList() {
-  const { token } = useAuth();
+function UrlList({ urls, loading, onDelete }) {
+  const [copiedCode, setCopiedCode] = useState(null);
 
-  const [urls, setUrls] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchUrls();
-  }, []);
-
-  const fetchUrls = async () => {
+  const handleCopy = async (shortCode) => {
     try {
-      const data = await getMyUrls(token);
-      setUrls(data.urls);
+      const shortUrl = `${window.location.origin}/${shortCode}`;
+
+      await navigator.clipboard.writeText(shortUrl);
+
+      setCopiedCode(shortCode);
+
+      setTimeout(() => {
+        setCopiedCode(null);
+      }, 2000);
     } catch (error) {
-      console.error("Failed to fetch URLs:", error);
-    } finally {
-      setLoading(false);
+      console.error("Failed to copy:", error);
     }
   };
 
@@ -55,16 +51,44 @@ function UrlList() {
             <th align="left">Short Code</th>
             <th align="left">Clicks</th>
             <th align="left">Expires</th>
+            <th align="left">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {urls.map((url, index) => (
-            <tr key={index}>
+          {urls.map((url) => (
+            <tr key={url.short_code}>
               <td>{url.original_url}</td>
               <td>{url.short_code}</td>
               <td>{url.clicks}</td>
               <td>{url.expires_at || "Never"}</td>
+
+              <td>
+                <button
+                  onClick={() => handleCopy(url.short_code)}
+                  style={{
+                    marginRight: "10px",
+                    padding: "6px 12px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {copiedCode === url.short_code ? "Copied ✓" : "Copy"}
+                </button>
+
+                <button
+                  onClick={() => onDelete(url.short_code)}
+                  style={{
+                    padding: "6px 12px",
+                    backgroundColor: "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

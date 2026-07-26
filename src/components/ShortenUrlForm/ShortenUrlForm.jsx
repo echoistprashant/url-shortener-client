@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { createShortUrl } from "../../services/urlService";
 
-function ShortenUrlForm() {
+function ShortenUrlForm({ onUrlCreated }) {
   const { token } = useAuth();
 
   const [url, setUrl] = useState("");
@@ -25,6 +25,7 @@ function ShortenUrlForm() {
       );
 
       setShortUrl(data.short_url);
+      await onUrlCreated();
 
       setUrl("");
       setCustomAlias("");
