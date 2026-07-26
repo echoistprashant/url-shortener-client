@@ -1,6 +1,8 @@
 import Navbar from "../../components/Navbar/Navbar";
 import ShortenUrlForm from "../../components/ShortenUrlForm/ShortenUrlForm";
 import { useAuth } from "../../context/AuthContext";
+import UrlList from "../../components/UrlList/UrlList";
+
 
 function Dashboard() {
   const { user } = useAuth();
@@ -38,6 +40,7 @@ function Dashboard() {
         </div>
 
         <ShortenUrlForm />
+        <UrlList />
       </main>
     </div>
   );

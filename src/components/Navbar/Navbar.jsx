@@ -1,7 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 function Navbar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <nav
@@ -15,12 +22,16 @@ function Navbar() {
     >
       <h2>URL Shortener</h2>
 
-      <div>
-        <span style={{ marginRight: "20px" }}>
-          Welcome, {user?.username}
-        </span>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
+        <span>Welcome, {user?.username}</span>
 
-        <button>
+        <button onClick={handleLogout}>
           Logout
         </button>
       </div>
