@@ -1,26 +1,25 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import Logo from "../ui/Logo";
 
 import { useAuth } from "../../context/AuthContext";
 
 function Sidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const navItems = [
     {
       name: "Dashboard",
       path: "/",
     },
-    {
-      name: "Analytics",
-      path: "/stats",
-    },
-    {
-      name: "Settings",
-      path: "/settings",
-    },
+    
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <aside
@@ -119,6 +118,25 @@ function Sidebar() {
           >
             {user?.email}
           </p>
+
+          <button
+            onClick={handleLogout}
+            className="
+              mt-5
+              w-full
+              rounded-xl
+              bg-[#A5CF83]
+              px-4
+              py-3
+              text-sm
+              font-semibold
+              text-[#173404]
+              transition
+              hover:bg-[#96C873]
+            "
+          >
+            Logout
+          </button>
         </div>
       </div>
     </aside>
