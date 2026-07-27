@@ -1,21 +1,32 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import DashboardLayout from "../../components/layout/DashboardLayout";
+
+import AnalyticsHeader from "../../components/analytics/AnalyticsHeader";
+import AnalyticsCards from "../../components/analytics/AnalyticsCards";
+import UrlDetailsCard from "../../components/analytics/UrlDetailsCard";
+import ActionButtons from "../../components/analytics/ActionButtons";
+
 import { getUrlStats } from "../../services/urlService";
 import { useAuth } from "../../context/AuthContext";
 
 function Stats() {
   const { shortCode } = useParams();
+
   const { token } = useAuth();
 
   const [stats, setStats] = useState(null);
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const data = await getUrlStats(shortCode, token);
+
         setStats(data);
       } catch (err) {
         console.error(err);
@@ -35,40 +46,48 @@ function Stats() {
     fetchStats();
   }, [shortCode, token]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: "red" }}>{error}</p>;
-  }
-
   return (
-    <div>
-      <h1>URL Statistics</h1>
+    <DashboardLayout>
+      <div className="space-y-8">
+        {loading ? (
+          <div
+            className="
+              rounded-3xl
+              border
+              border-[#E6E3DB]
+              bg-[#FAFAF8]
+              p-8
+              text-[#6F757B]
+            "
+          >
+            Loading analytics...
+          </div>
+        ) : error ? (
+          <div
+            className="
+              rounded-3xl
+              border
+              border-red-200
+              bg-red-50
+              p-8
+              text-red-600
+            "
+          >
+            {error}
+          </div>
+        ) : (
+          <>
+            <AnalyticsHeader />
 
-      <p>
-        <strong>Original URL:</strong> {stats.original_url}
-      </p>
+            <AnalyticsCards stats={stats} />
 
-      <p>
-        <strong>Short Code:</strong> {stats.short_code}
-      </p>
+            <UrlDetailsCard stats={stats} />
 
-      <p>
-        <strong>Total Clicks:</strong> {stats.clicks}
-      </p>
-
-      <p>
-        <strong>Expires At:</strong>{" "}
-        {stats.expires_at ? stats.expires_at : "Never"}
-      </p>
-
-      <p>
-        <strong>Status:</strong>{" "}
-        {stats.is_expired ? "Expired" : "Active"}
-      </p>
-    </div>
+            <ActionButtons stats={stats} />
+          </>
+        )}
+      </div>
+    </DashboardLayout>
   );
 }
 

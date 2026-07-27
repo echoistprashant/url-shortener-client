@@ -1,119 +1,405 @@
 import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar/Navbar";
+
+import DashboardLayout from "../../components/layout/DashboardLayout";
 import ShortenUrlForm from "../../components/ShortenUrlForm/ShortenUrlForm";
 import UrlList from "../../components/UrlList/UrlList";
+import DeleteModal from "../../components/modals/DeleteModal";
+
+import MetricsCards from "./MetricsCards";
+
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
+
 import {
   getMyUrls,
   deleteShortUrl,
 } from "../../services/urlService";
 
+
 function Dashboard() {
+
   const { user, token } = useAuth();
+  const { showToast } = useToast();
+
 
   const [urls, setUrls] = useState([]);
+
   const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
 
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [selectedShortCode, setSelectedShortCode] = useState(null);
+
+
+
   const fetchUrls = async () => {
+
     try {
+
       setLoading(true);
 
-      const data = await getMyUrls(token, search);
+
+      const data = await getMyUrls(
+        token,
+        search
+      );
+
+
       setUrls(data.urls);
+
+
     } catch (error) {
-      console.error("Failed to fetch URLs:", error);
+
+      console.error(
+        "Failed to fetch URLs:",
+        error
+      );
+
+
+      showToast(
+        "Failed to load links.",
+        "error"
+      );
+
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
-  const handleDelete = async (shortCode) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this URL?"
-    );
 
-    if (!confirmed) {
-      return;
-    }
+
+
+  const handleDelete = (shortCode) => {
+
+    setSelectedShortCode(shortCode);
+
+    setShowDeleteModal(true);
+
+  };
+
+
+
+
+
+  const confirmDelete = async () => {
 
     try {
-      await deleteShortUrl(shortCode, token);
+
+
+      await deleteShortUrl(
+        selectedShortCode,
+        token
+      );
+
+
       await fetchUrls();
+
+
+      showToast(
+        "URL deleted successfully"
+      );
+
+
     } catch (error) {
-      console.error("Failed to delete URL:", error);
-      alert("Failed to delete URL.");
+
+
+      console.error(
+        "Failed to delete URL:",
+        error
+      );
+
+
+      showToast(
+        "Failed to delete URL.",
+        "error"
+      );
+
+
+    } finally {
+
+
+      setShowDeleteModal(false);
+
+      setSelectedShortCode(null);
+
+
     }
+
   };
 
+
+
+
+
   useEffect(() => {
+
     fetchUrls();
+
   }, [search]);
 
+
+
+
+
   return (
-    <div>
-      <Navbar />
 
-      <main
-        style={{
-          maxWidth: "1000px",
-          margin: "40px auto",
-          padding: "0 20px",
-        }}
-      >
-        <h1>Dashboard</h1>
+    <DashboardLayout>
+
+      <div className="space-y-8">
+
+
+
+        {/* Welcome Section */}
+
 
         <div
-          style={{
-            marginTop: "20px",
-            padding: "20px",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-          }}
+          className="
+            rounded-3xl
+            border
+            border-[#E6E3DB]
+            bg-[#FAFAF8]
+            p-8
+          "
         >
-          <h2>Welcome, {user?.username} 👋</h2>
 
-          <p>
-            <strong>Email:</strong> {user?.email}
+
+          <h1
+            className="
+              text-3xl
+              font-bold
+              text-[#22262A]
+            "
+          >
+
+            Welcome back, {user?.username} 👋
+
+          </h1>
+
+
+
+          <p
+            className="
+              mt-2
+              text-[#6F757B]
+            "
+          >
+
+            Manage, shorten and track all your links from one place.
+
           </p>
 
-          <p>
-            <strong>User ID:</strong> {user?.id}
-          </p>
+
+
+
+          <div
+            className="
+              mt-8
+              grid
+              gap-6
+              md:grid-cols-2
+            "
+          >
+
+
+            <div
+              className="
+                rounded-2xl
+                border
+                border-[#E6E3DB]
+                bg-white
+                p-5
+              "
+            >
+
+              <p
+                className="
+                  text-sm
+                  text-[#6F757B]
+                "
+              >
+                Email
+              </p>
+
+
+              <p
+                className="
+                  mt-2
+                  font-medium
+                  text-[#22262A]
+                "
+              >
+                {user?.email}
+              </p>
+
+
+            </div>
+
+
+
+
+            <div
+              className="
+                rounded-2xl
+                border
+                border-[#E6E3DB]
+                bg-white
+                p-5
+              "
+            >
+
+              <p
+                className="
+                  text-sm
+                  text-[#6F757B]
+                "
+              >
+                User ID
+              </p>
+
+
+              <p
+                className="
+                  mt-2
+                  font-medium
+                  text-[#22262A]
+                "
+              >
+                {user?.id}
+              </p>
+
+
+            </div>
+
+
+          </div>
+
+
         </div>
 
-        <ShortenUrlForm onUrlCreated={fetchUrls} />
 
-        <div
-          style={{
-            marginTop: "20px",
-            marginBottom: "20px",
-          }}
-        >
+
+
+
+        {/* Metrics */}
+
+
+        <MetricsCards
+          urls={urls}
+        />
+
+
+
+
+
+        {/* Create Link */}
+
+
+        <ShortenUrlForm
+          onUrlCreated={fetchUrls}
+        />
+
+
+
+
+
+        {/* Search */}
+
+
+        <div>
+
+
           <input
+
             type="text"
-            placeholder="Search URLs..."
+
+            placeholder="Search links..."
+
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              fontSize: "16px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              boxSizing: "border-box",
-            }}
+
+            onChange={(event) =>
+              setSearch(event.target.value)
+            }
+
+
+            className="
+              w-full
+              rounded-2xl
+              border
+              border-[#E6E3DB]
+              bg-white
+              px-5
+              py-4
+              text-[#22262A]
+              placeholder:text-[#9AA0A6]
+              outline-none
+              transition
+              focus:border-[#A5CF83]
+              focus:ring-2
+              focus:ring-[#D8E9C8]
+            "
+
           />
+
+
         </div>
+
+
+
+
+
+        {/* URL List */}
+
 
         <UrlList
+
           urls={urls}
+
           loading={loading}
+
           onDelete={handleDelete}
+
         />
-      </main>
-    </div>
+
+
+
+
+
+        {/* Delete Modal */}
+
+
+        <DeleteModal
+
+          isOpen={showDeleteModal}
+
+          onClose={() => {
+
+            setShowDeleteModal(false);
+
+            setSelectedShortCode(null);
+
+          }}
+
+          onConfirm={confirmDelete}
+
+        />
+
+
+
+      </div>
+
+
+    </DashboardLayout>
+
   );
+
 }
+
 
 export default Dashboard;
