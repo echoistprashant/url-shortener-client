@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import AuthLayout from "../../components/ui/AuthLayout";
+import Card from "../../components/ui/Card";
+import Logo from "../../components/ui/Logo";
+import Input from "../../components/ui/Input";
+import Button from "../../components/ui/Button";
+
 import { login as loginUser } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
 
@@ -40,62 +46,81 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <AuthLayout>
+      <Card>
+        <div className="space-y-10">
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <br />
-          <input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
+          {/* Mobile Logo */}
+
+          <div className="lg:hidden">
+            <Logo />
+          </div>
+
+          {/* Heading */}
+
+          <div className="space-y-3">
+            <h1 className="text-4xl font-bold tracking-tight text-[#22262A]">
+              Welcome back
+            </h1>
+
+            <p className="text-[#6F757B]">
+              Sign in to continue managing your links.
+            </p>
+          </div>
+
+          {/* Form */}
+
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
+            <Input
+              label="Email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <Input
+              label="Password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+            <Button type="submit">
+              Continue
+            </Button>
+          </form>
+
+          {/* Footer */}
+
+<div className="text-center text-sm">
+  <span className="text-[#6F757B]">
+    Don't have an account?{" "}
+  </span>
+
+  <Link
+    to="/signup"
+    className="font-medium text-[#639922] hover:underline"
+  >
+    Create account
+  </Link>
+</div>
+
         </div>
-
-        <br />
-
-        <div>
-          <label htmlFor="password">Password</label>
-          <br />
-          <input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-        </div>
-
-        <br />
-
-        <br />
-
-
-        {error && (
-          <p style={{ color: "red" }}>
-            {error}
-          </p>
-        )}
-
-        <button type="submit">
-          Login
-        </button>
-      </form>
-
-      
-        <p>
-            Don't have an account?{" "}
-            <Link to="/signup">
-              Sign Up
-            </Link>
-        </p>
-    </div>
+      </Card>
+    </AuthLayout>
   );
 }
 
