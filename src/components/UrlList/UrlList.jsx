@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function UrlList({ urls, loading, onDelete }) {
   const [copiedCode, setCopiedCode] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleCopy = async (shortCode) => {
     try {
@@ -73,6 +76,17 @@ function UrlList({ urls, loading, onDelete }) {
                   }}
                 >
                   {copiedCode === url.short_code ? "Copied ✓" : "Copy"}
+                </button>
+
+                <button
+                  onClick={() => navigate(`/stats/${url.short_code}`)}
+                  style={{
+                    marginRight: "10px",
+                    padding: "6px 12px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Stats
                 </button>
 
                 <button

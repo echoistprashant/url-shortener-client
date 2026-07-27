@@ -33,3 +33,13 @@ export const deleteShortUrl = async (shortCode, token) => {
 
   return response.data;
 };
+
+export const getUrlStats = async (shortCode, token) => {
+  const response = await api.get(`/stats/${shortCode}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
