@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { login as loginUser } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
@@ -74,6 +74,9 @@ function Login() {
 
         <br />
 
+        <br />
+
+
         {error && (
           <p style={{ color: "red" }}>
             {error}
@@ -84,6 +87,14 @@ function Login() {
           Login
         </button>
       </form>
+
+      
+        <p>
+            Don't have an account?{" "}
+            <Link to="/signup">
+              Sign Up
+            </Link>
+        </p>
     </div>
   );
 }
