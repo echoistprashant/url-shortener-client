@@ -1,4 +1,4 @@
-import AppRoutes from "./routes/approutes";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return <AppRoutes />;

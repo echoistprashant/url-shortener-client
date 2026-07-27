@@ -131,7 +131,7 @@ npm install
 Create a `.env` file in the project root.
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8000
 ```
 
 Replace the API URL with your deployed backend URL when running the application in production.

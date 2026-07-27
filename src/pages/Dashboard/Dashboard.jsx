@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import ShortenUrlForm from "../../components/ShortenUrlForm/ShortenUrlForm";
@@ -35,7 +35,7 @@ function Dashboard() {
 
 
 
-  const fetchUrls = async () => {
+  const fetchUrls = useCallback(async () => {
 
     try {
 
@@ -71,7 +71,7 @@ function Dashboard() {
 
     }
 
-  };
+  }, [search, showToast, token]);
 
 
 
@@ -142,7 +142,7 @@ function Dashboard() {
 
     fetchUrls();
 
-  }, [search]);
+  }, [fetchUrls]);
 
 
 

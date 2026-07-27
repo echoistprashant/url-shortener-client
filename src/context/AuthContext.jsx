@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { getCurrentUser } from "../services/authService";
 
 const AuthContext = createContext();
@@ -9,6 +9,44 @@ export function AuthProvider({ children }) {
   });
 
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(Boolean(token));
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const restoreUser = async () => {
+      if (!token) {
+        setAuthLoading(false);
+        return;
+      }
+
+      try {
+        const currentUser = await getCurrentUser(token);
+
+        if (isMounted) {
+          setUser(currentUser);
+        }
+      } catch (error) {
+        console.error("Failed to restore user session:", error);
+
+        if (isMounted) {
+          setToken(null);
+          setUser(null);
+          localStorage.removeItem("token");
+        }
+      } finally {
+        if (isMounted) {
+          setAuthLoading(false);
+        }
+      }
+    };
+
+    restoreUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
 
   const login = async (newToken) => {
     setToken(newToken);
@@ -38,6 +76,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
     isAuthenticated: !!token,
+    authLoading,
   };
 
   return (
